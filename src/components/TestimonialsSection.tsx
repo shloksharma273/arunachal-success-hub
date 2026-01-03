@@ -1,5 +1,4 @@
 import { Star, Quote } from "lucide-react";
-import { useState } from "react";
 
 const testimonials = [
   {
@@ -36,11 +35,54 @@ const testimonials = [
   },
 ];
 
+const TestimonialCard = ({ testimonial }: { testimonial: typeof testimonials[0] }) => (
+  <div className="flex-shrink-0 w-[350px] md:w-[400px] bg-card rounded-2xl p-6 shadow-card border border-border mx-3">
+    {/* Quote Icon */}
+    <Quote className="w-8 h-8 text-primary/20 mb-3" />
+
+    {/* Quote */}
+    <p className="text-foreground leading-relaxed mb-4 text-sm md:text-base line-clamp-4">
+      "{testimonial.quote}"
+    </p>
+
+    {/* Rating */}
+    <div className="flex items-center gap-1 mb-3">
+      {[...Array(testimonial.rating)].map((_, i) => (
+        <Star key={i} className="w-4 h-4 fill-accent text-accent" />
+      ))}
+    </div>
+
+    {/* Author Info */}
+    <div className="flex items-center gap-3">
+      {/* Avatar Placeholder */}
+      <div className="w-10 h-10 rounded-full gradient-hero flex items-center justify-center text-primary-foreground font-bold text-sm">
+        {testimonial.name.split(' ').map(n => n[0]).join('')}
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <h4 className="font-heading font-semibold text-foreground text-sm truncate">
+          {testimonial.name}
+        </h4>
+        <p className="text-xs text-muted-foreground">
+          {testimonial.exam} • {testimonial.year}
+        </p>
+      </div>
+
+      {/* Success Badge */}
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-xs font-medium">
+        <span className="w-1.5 h-1.5 rounded-full bg-secondary" />
+        Cleared
+      </span>
+    </div>
+  </div>
+);
+
 export const TestimonialsSection = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  // Duplicate testimonials for seamless loop
+  const duplicatedTestimonials = [...testimonials, ...testimonials];
 
   return (
-    <section id="testimonials" className="section-padding bg-muted/30">
+    <section id="testimonials" className="section-padding bg-muted/30 overflow-hidden">
       <div className="container-custom">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
@@ -55,73 +97,18 @@ export const TestimonialsSection = () => {
             government teachers in Arunachal Pradesh.
           </p>
         </div>
+      </div>
 
-        {/* Testimonials Grid */}
-        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={testimonial.name}
-              className="group bg-card rounded-2xl p-6 md:p-8 shadow-card hover:shadow-elevated transition-all duration-300 border border-border hover:border-primary/30 animate-fade-in"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              {/* Quote Icon */}
-              <Quote className="w-10 h-10 text-primary/20 mb-4" />
+      {/* Continuous Sliding Testimonials */}
+      <div className="relative">
+        {/* Gradient Overlays */}
+        <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-muted/30 to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-muted/30 to-transparent z-10 pointer-events-none" />
 
-              {/* Quote */}
-              <p className="text-foreground leading-relaxed mb-6 text-lg">
-                "{testimonial.quote}"
-              </p>
-
-              {/* Rating */}
-              <div className="flex items-center gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-accent text-accent" />
-                ))}
-              </div>
-
-              {/* Author Info */}
-              <div className="flex items-center gap-4">
-                {/* Avatar Placeholder */}
-                <div className="w-14 h-14 rounded-full gradient-hero flex items-center justify-center text-primary-foreground font-bold text-lg">
-                  {testimonial.name.split(' ').map(n => n[0]).join('')}
-                </div>
-
-                <div>
-                  <h4 className="font-heading font-semibold text-foreground">
-                    {testimonial.name}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    {testimonial.exam} • {testimonial.year}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {testimonial.location}, Arunachal Pradesh
-                  </p>
-                </div>
-
-                {/* Success Badge */}
-                <div className="ml-auto hidden sm:block">
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs font-medium">
-                    <span className="w-2 h-2 rounded-full bg-secondary" />
-                    Cleared
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Dots Indicator (decorative) */}
-        <div className="flex items-center justify-center gap-2 mt-8">
-          {testimonials.map((_, index) => (
-            <button
-              key={index}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                index === activeIndex 
-                  ? 'bg-primary w-8' 
-                  : 'bg-primary/30 hover:bg-primary/50'
-              }`}
-              onClick={() => setActiveIndex(index)}
-            />
+        {/* Sliding Track */}
+        <div className="flex animate-marquee hover:[animation-play-state:paused]">
+          {duplicatedTestimonials.map((testimonial, index) => (
+            <TestimonialCard key={`${testimonial.name}-${index}`} testimonial={testimonial} />
           ))}
         </div>
       </div>
